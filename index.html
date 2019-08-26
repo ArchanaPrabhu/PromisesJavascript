@@ -18,24 +18,54 @@
         <div id="output"></div>
     </body>
     <script>
-            const API_URL = "https://starwars.egghead.training/"
-            
-            const output = document.getElementById("output");
-            output.innerText = "Loading...";
-            
-            fetch(API_URL + "films")
-            .then(response =>  response.json())
-            .then(films => {
-                output.innerText = getFilmTitles(films)});
-            // The promises tell that a request will be processed after some time. 
-            // a promise is in either pending state, fulfilled, rejected or settled.
-            
-            function getFilmTitles(films) {
-                const filmsTitles = films
-                .sort((a, b) => a.episode_id - b.episode_id)
-                .map(film => `${film.episode_id}. ${film.title}`)
-                .join("\n");
-                return filmsTitles;
+        const API_URL = "https://starwars.egghead.training/"
+        
+        const output = document.getElementById("output");
+        output.innerText = "Loading...";
+        // // Done on day 1
+        // fetch(API_URL + "films")
+        // .then(response =>  response.json())
+        // .then(films => {
+        //     output.innerText = getFilmTitles(films)});
+        // The promises tell that a request will be processed after some time. 
+        // a promise is in either pending state, fulfilled, rejected or settled.
+        
+        function getFilmTitles(films) {
+            const filmsTitles = films
+            .sort((a, b) => a.episode_id - b.episode_id)
+            .map(film => `${film.episode_id}. ${film.title}`)
+            .join("\n");
+            return filmsTitles;
+        }
+
+        // fetch(API_URL + "films")
+        // .then(
+        //     // on Fulfilled
+        //     response => {
+        //         response.json() // response.json can also send reject promise
+        //         .then(films => {
+        //             output.innerText = getFilmTitles(films);
+        //         });
+        //     },
+        //     //on Rejected
+        //     error => {
+        //         console.warn(error);
+        //         output.innerText = ":(";
+        //     }
+        // );
+
+        fetch(API_URL + "films")
+        .then(response => {
+            if(!response.ok) {
+                throw Error("Unsuccessful response");
             }
-            </script>
+            return response.json().then(films => {
+                output.innerText = getFilmTitles(films);
+            });
+        })
+        .catch(error => {
+            console.warn(error);
+            output.innerText = ":(";
+        });
+    </script>
 </html>
