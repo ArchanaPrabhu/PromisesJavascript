@@ -16,12 +16,13 @@
     <body>
         <h1>Star wars films</h1>
         <div id="output"></div>
+        <div id="spinner">
+            <img src="spinner.gif" alt="Spinner" height="32">
+        </div>
+
     </body>
     <script>
-        const API_URL = "https://starwars.egghead.training/"
         
-        const output = document.getElementById("output");
-        output.innerText = "Loading...";
         // // Done on day 1
         // fetch(API_URL + "films")
         // .then(response =>  response.json())
@@ -29,14 +30,6 @@
         //     output.innerText = getFilmTitles(films)});
         // The promises tell that a request will be processed after some time. 
         // a promise is in either pending state, fulfilled, rejected or settled.
-        
-        function getFilmTitles(films) {
-            const filmsTitles = films
-            .sort((a, b) => a.episode_id - b.episode_id)
-            .map(film => `${film.episode_id}. ${film.title}`)
-            .join("\n");
-            return filmsTitles;
-        }
 
         // fetch(API_URL + "films")
         // .then(
@@ -54,18 +47,76 @@
         //     }
         // );
 
+        // #region setup
+        const API_URL = "https://starwars.egghead.training/"
+        
+        const output = document.getElementById("output");
+        const spinner = document.getElementById("spinner");
+
+        // output.innerText = "Loading...";
+
+        function getFilmTitles(films) {
+            const filmsTitles = films
+            .sort((a, b) => a.episode_id - b.episode_id)
+            .map(film => `${film.episode_id}. ${film.title}`)
+            .join("\n");
+            return filmsTitles;
+        }
+
+        // #endregion
+
         fetch(API_URL + "films")
         .then(response => {
             if(!response.ok) {
                 throw Error("Unsuccessful response");
+                /*
+                return Promise.reject(
+                    new Error("Unsuccessful response")
+                    );
+                */
             }
             return response.json().then(films => {
                 output.innerText = getFilmTitles(films);
+                return films;
             });
         })
         .catch(error => {
             console.warn(error);
             output.innerText = ":(";
+        })
+        .finally(() => {
+            spinner.remove();
+        })
+        .then (films => {
+            console.log(films);
         });
+
+        // finally can be used instead of all of this
+        // finally is used to run a code after a Promise is settled. Fulfilled or rejected.
+
+        /*
+        Promise.resolve(42)
+         - returns a resolved promise andalways ahas a reference of it
+        Promise.reject
+        - requires a rejected handler
+
+        Promise.resolve - converting promise like objects to proper native promises.
+        - when an api call is made using jQuery to make the ajax request
+
+        */
+
+        // Promise.resolve($.getJSON(API_URL + "films"))
+        // .then(films => {
+        //     output.innerText = getFilmTitles(films);    
+        // })
+        // .catch(error => {
+        //     console.warn(error);
+        //     output.innerText = ":(";
+        // }) 
+        // .finally(() => {
+        //     spinner.remove();
+        // });
+        
+
     </script>
 </html>
